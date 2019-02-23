@@ -34,41 +34,7 @@
 
      <!--Load the AJAX API-->
      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-     <script type="text/javascript">
  
-       // Load the Visualization API and the corechart package.
-       google.charts.load('current', {'packages':['corechart']});
- 
-       // Set a callback to run when the Google Visualization API is loaded.
-       google.charts.setOnLoadCallback(drawChart);
- 
-       // Callback that creates and populates a data table,
-       // instantiates the pie chart, passes in the data and
-       // draws it.
-       function drawChart() {
- 
-         // Create the data table.
-         var data = new google.visualization.DataTable();
-         data.addColumn('string', 'Topping');
-         data.addColumn('number', 'Slices');
-         data.addRows([
-           ['Mushrooms', 3],
-           ['Onions', 1],
-           ['Olives', 1],
-           ['Zucchini', 1],
-           ['Pepperoni', 2]
-         ]);
- 
-         // Set chart options
-         var options = {'title':'How Much Pizza I Ate Last Night',
-                        'width':400,
-                        'height':300};
- 
-         // Instantiate and draw our chart, passing in some options.
-         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-         chart.draw(data, options);
-       }
-     </script>
  
 Procesos
 estoy en la vitual
@@ -176,6 +142,41 @@ var link=
       var chart = new google.visualization.LineChart(document.getElementById('chartRAM'));
       chart.draw(data, options);
   }
+
+ 
+       // Load the Visualization API and the corechart package.
+       google.charts.load('current', {'packages':['corechart']});
+ 
+       // Set a callback to run when the Google Visualization API is loaded.
+       google.charts.setOnLoadCallback(drawChart);
+ 
+       // Callback that creates and populates a data table,
+       // instantiates the pie chart, passes in the data and
+       // draws it.
+       function drawChart() {
+ 
+         // Create the data table.
+         var data = new google.visualization.DataTable();
+         data.addColumn('string', 'Topping');
+         data.addColumn('number', 'Slices');
+         data.addRows([
+           ['Mushrooms', 3],
+           ['Onions', 1],
+           ['Olives', 1],
+           ['Zucchini', 1],
+           ['Pepperoni', 2]
+         ]);
+ 
+         // Set chart options
+         var options = {'title':'How Much Pizza I Ate Last Night',
+                        'width':400,
+                        'height':300};
+ 
+         // Instantiate and draw our chart, passing in some options.
+         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+         chart.draw(data, options);
+       }
+     
   function drawChart(ram) {
       let usado = ram.total - ram.libre;
       let libre = ram.libre;
@@ -210,7 +211,7 @@ var link=
       $.ajax({
           type: 'POST',
           //data: JSON.stringify(data),
-          contentType: 'application/json',
+          contentType: 'text/html; charset=utf-8',
           url: link+"Procesos",
           success: function (data) {
               //console.log('success');
@@ -247,22 +248,27 @@ var link=
 
 
       var data = {};
-      data.title = "title";
       data.message = id;
-
+/*
       $.ajax({
-          type: 'POST',
-          data: JSON.stringify(data),
-          contentType: 'application/json',
-          url: 'http://localhost:8080/matar',
+        type: 'POST',  
+        dataType: 'json',
+        data:{message:id},
+        contentType: 'application/json',
+          url: link+'Kill',
           success: function (data) {
               console.log('success');
-              //console.log(JSON.stringify(data));
+              console.log(JSON.stringify(data));
           },
           error: function () { console.log('error'); }
       });
-
-
+  */
+  $.post(link+'Kill', { message: id}, 
+    function(returnedData){
+         console.log(returnedData);
+});   
+    
+    
   }
   function imprimirCPUUso(cpu, dato) {
       //console.log(dato);
@@ -283,7 +289,7 @@ var link=
       $.ajax({
           type: 'POST',
           //data: JSON.stringify(data),
-          contentType: 'application/json',
+          contentType: 'json',
           url: link+"Cpu",
           success: function (data) {
               // console.log('success');
@@ -295,14 +301,15 @@ var link=
               ram_S.shift();
               ram_S.push(data.ram.porcentaje);
               cpu_S.shift();
-              cpu_S.push([data.cpu1.porcentaje, data.cpu2.porcentaje]);
+              cpu_S.push([data.cpu1.porcentaje//, data.cpu2.porcentaje
+              ]);
 
               google.charts.load('current', { packages: ['corechart', 'line'] });
               google.charts.setOnLoadCallback(drawCurveTypes);
               google.charts.setOnLoadCallback(drawingRam);
 
               imprimirCPUUso("cpu1", data.cpu1.uso);
-              imprimirCPUUso("cpu2", data.cpu2.uso);
+              //imprimirCPUUso("cpu2", data.cpu2.uso);
 
           },
           error: function () { console.log('error en el archivo ram'); }
@@ -322,9 +329,9 @@ var link=
           $.ajax({
               type: 'POST',
               data: JSON.stringify(data),
-              contentType: 'application/json',
+              contentType: 'json',
               
-              url: 'http://localhost:8080/endpoint',
+              url: link+'Cpu',
               success: function (data) {
                   //console.log('success');
                   //console.log(JSON.stringify(data));
